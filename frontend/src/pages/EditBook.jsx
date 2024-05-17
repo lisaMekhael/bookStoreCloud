@@ -19,7 +19,7 @@ const EditBook = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://localhost:5555/books/${id}`)
+      .get(`http://localhost:18.209.175.84/books/${id}`)
       .then((response) => {
         setAuthor(response.data.author);
         setPublishYear(response.data.publishYear);
@@ -52,7 +52,7 @@ const EditBook = () => {
 
     setLoading(true);
     axios
-      .put(`http://localhost:5555/books/${id}`, formData, {
+      .put(`http://localhost:18.209.175.84/books/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

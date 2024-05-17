@@ -13,7 +13,7 @@ const ShowBook = () => {
   useEffect(() => {
     console.log("FRONT ENDDDD");
     axios
-      .get(`http://localhost:5555/books/${id}`)
+      .get(`http://localhost:18.209.175.84/books/${id}`)
       .then((response) => {
         setBooks(response.data);
         setLoading(false);

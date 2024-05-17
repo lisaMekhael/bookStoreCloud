@@ -15,7 +15,7 @@ const DeleteBook = () => {
     console.log("ENTER DELETE");
     setLoading(true);
     axios
-      .delete(`http://localhost:5555/books/${id}`)
+      .delete(`http://localhost:18.209.175.84/books/${id}`)
       .then(() => {
         setLoading(false);
         enqueueSnackbar("Book Deleted Successfully", { variant: "success" });
