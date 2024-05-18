@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-unused-vars
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import Spinner from "../components/Spinner";
@@ -17,7 +16,7 @@ const Home = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get("http://3.236.157.15:5555/books")
+      .get("http://3.236.157.152:5555/books")
       .then((response) => {
         setBooks(response.data.data);
         setLoading(false);
@@ -28,6 +27,7 @@ const Home = () => {
         setLoading(false);
       });
   }, []);
+
   return (
     <div className="p-4">
       <div className="flex justify-center items-center gap-x-4">

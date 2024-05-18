@@ -7,21 +7,23 @@ import booksRoute from "./routes/booksRoute.js";
 dotenv.config();
 
 const app = express();
-const PORT = 5555 ;
+const PORT = 5555;
 
 // Middleware for parsing request body
 app.use(express.json());
 
 // Middleware for handling CORS POLICY
-app.use(cors());
-
+app.use(
+  cors({
+    origin: "http://3.236.157.152:5173", // Update with your actual frontend URL
+  })
+);
 app.get("/", (req, res) => {
   console.log(req);
   return res.status(200).send("Welcome to MERN Stack Book Shop");
 });
 
 app.use("/books", booksRoute);
-
 
 // Start the server
 app.listen(PORT, () => {
