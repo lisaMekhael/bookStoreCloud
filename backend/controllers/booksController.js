@@ -7,50 +7,69 @@ import {
   DeleteItemCommand,
 } from "@aws-sdk/client-dynamodb";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
-import multer from "multer";
 
-// AWS SDK v3 Configuration with Hardcoded Values
+import dotenv from "dotenv";
+import multer from 'multer';
+
+
+// Load environment variables from .env file
+dotenv.config();
+// Debug logging to verify environment variables
+console.log("Loading AWS SDK configuration...");
+console.log("AWS_REGION:", process.env.AWS_REGION);
+console.log("AWS_ACCESS_KEY_ID:", process.env.AWS_ACCESS_KEY_ID);
+console.log(
+  "AWS_SECRET_ACCESS_KEY:",
+  process.env.AWS_SECRET_ACCESS_KEY ? "*****" : "Not set"
+);
+
+// AWS SDK v3 Configuration
 const client = new DynamoDBClient({
-  region: "us-east-1",
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: "AKIAVRUVWIZAFQFS4BPZ",
-    secretAccessKey: "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",
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   },
 });
 
-const s3 = new S3Client({ region: "us-east-1" });
-const upload = multer({ dest: "../uploads/" });
-const AWS_S3_BUCKET_NAME_BEFORE = "bucketbeforeresize";
-const AWS_S3_BUCKET_NAME_AFTER = "bucketafterresize";
+const s3 = new S3Client({ region: process.env.AWS_REGION });
+const upload = multer({ dest: '../uploads/' });
+
 
 // Controller for creating a new book
 export const createBook = async (req, res) => {
   try {
     const { title, author, publishYear } = req.body;
-    const { file } = req;
+    const { file } = req; 
 
-    console.log("FILE:", file);
+    console.log("FILEEE: " , file);
 
     let imageUrl = null;
 
+    console.log(process.env.AWS_S3_BUCKET_NAME_BEFORE)
+
     if (file) {
+      console.log("enter");
       const uploadParams = {
-        Bucket: AWS_S3_BUCKET_NAME_BEFORE,
-        Key: `${file.originalname}`,
+        Bucket: process.env.AWS_S3_BUCKET_NAME_BEFORE,
+        // Key: `${Date.now()}_${file.originalname}`, 
+        Key: `${file.originalname}`, 
         Body: file.buffer,
         ContentType: file.mimetype,
       };
       const command = new PutObjectCommand(uploadParams);
       const data = await s3.send(command);
 
-      imageUrl = `https://${AWS_S3_BUCKET_NAME_AFTER}.s3.amazonaws.com/${uploadParams.Key}`;
-      console.log("IMAGE URL:", imageUrl);
+
+      imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME_AFTER}.s3.amazonaws.com/${uploadParams.Key}`;
+      console.log("IMAGE URLLLL:" , imageUrl)
+
     }
 
     const params = {
       TableName: "Books",
       Item: {
-        id: { S: new Date().toISOString() },
+        id: { S: new Date().toISOString() }, // Generating a simple unique id based on timestamp
         title: { S: req.body.title },
         author: { S: req.body.author },
         publishYear: { N: req.body.publishYear.toString() },
@@ -70,7 +89,6 @@ export const createBook = async (req, res) => {
 };
 
 // Controller for getting all books
-// Controller for getting all books
 export const getAllBooks = async (req, res) => {
   try {
     const params = {
@@ -79,7 +97,7 @@ export const getAllBooks = async (req, res) => {
 
     const command = new ScanCommand(params);
     const data = await client.send(command);
-    console.log("Raw data from DynamoDB:", data);
+  console.log("Raw data from DynamoDB:", data);
 
     const books = data.Items.map((item) => ({
       id: item.id?.S,
@@ -106,7 +124,7 @@ export const getBookById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log("ID:", id);
+    console.log("IDDDDD:" , id);
 
     const params = {
       TableName: "Books",
@@ -143,7 +161,7 @@ export const getBookById = async (req, res) => {
 export const updateBook = async (req, res) => {
   try {
     if (!req.body.title || !req.body.author || !req.body.publishYear) {
-      console.log("ERROR");
+      console.log("ERRRORRR")
     }
 
     console.log("UPDATE DATA:", req.body);
@@ -156,18 +174,22 @@ export const updateBook = async (req, res) => {
 
     if (file) {
       const uploadParams = {
-        Bucket: AWS_S3_BUCKET_NAME_BEFORE,
-        Key: `${file.originalname}`,
+        Bucket: process.env.AWS_S3_BUCKET_NAME_BEFORE,
+        // Key: `${Date.now()}_${file.originalname}`, // Using a timestamp to make the filename unique
+        Key: `${file.originalname}`, 
         Body: file.buffer,
         ContentType: file.mimetype,
       };
 
       const command = new PutObjectCommand(uploadParams);
+      console.log("PARAM:" , command);
       await s3.send(command);
 
+      console.log(uploadParams.Key);
+
       // Generate the S3 object URL
-      imageUrl = `https://${AWS_S3_BUCKET_NAME_AFTER}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
-      console.log("URL:", imageUrl);
+      imageUrl = `https://${process.env.AWS_S3_BUCKET_NAME_AFTER}.s3.${process.env.AWS_REGION}.amazonaws.com/${uploadParams.Key}`;
+      console.log("URLLLLLLLLLLLLLL: " , imageUrl);
     }
 
     const params = {
@@ -176,8 +198,7 @@ export const updateBook = async (req, res) => {
         id: { S: id },
       },
       UpdateExpression:
-        "set title = :title, author = :author, publishYear = :publishYear, updatedAt = :updatedAt" +
-        (imageUrl ? ", imageUrl = :imageUrl" : ""),
+        "set title = :title, author = :author, publishYear = :publishYear, updatedAt = :updatedAt" + (imageUrl ? ", imageUrl = :imageUrl" : ""),
       ExpressionAttributeValues: {
         ":title": { S: req.body.title },
         ":author": { S: req.body.author },
@@ -206,7 +227,7 @@ export const deleteBook = async (req, res) => {
   try {
     const { id } = req.params;
 
-    console.log("ID:", id);
+    console.log("IDDDDDDDDDDDDD:" , id);
 
     const params = {
       TableName: "Books",
