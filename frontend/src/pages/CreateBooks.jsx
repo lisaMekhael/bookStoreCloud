@@ -26,7 +26,7 @@ const CreateBooks = () => {
 
     setLoading(true);
     axios
-      .post("http://44.215.104.196/books", formData, {
+      .post("http://54.167.90.253:5173/books", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
