@@ -7,7 +7,7 @@ import booksRoute from "./routes/booksRoute.js";
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT ;
+const PORT = 5555 ;
 
 // Middleware for parsing request body
 app.use(express.json());
