@@ -19,7 +19,7 @@ const EditBook = () => {
   useEffect(() => {
     setLoading(true);
     axios
-      .get(`http://44.215.104.196/books/${id}`)
+      .get(`http://44.215.104.196:5555/books/${id}`)
       .then((response) => {
         setAuthor(response.data.author);
         setPublishYear(response.data.publishYear);
@@ -38,7 +38,7 @@ const EditBook = () => {
     formData.append("title", title);
     formData.append("author", author);
     formData.append("publishYear", publishYear);
-    console.log("**************" , image);
+    console.log("**************", image);
 
     if (image) {
       console.log("enter image");
@@ -52,7 +52,7 @@ const EditBook = () => {
 
     setLoading(true);
     axios
-      .put(`http://44.215.104.196/books/${id}`, formData, {
+      .put(`http://44.215.104.196:5555/books/${id}`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },

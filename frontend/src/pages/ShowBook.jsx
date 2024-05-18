@@ -13,13 +13,13 @@ const ShowBook = () => {
   useEffect(() => {
     console.log("FRONT ENDDDD");
     axios
-      .get(`http://44.215.104.196/books/${id}`)
+      .get(`http://44.215.104.196:5555/books/${id}`)
       .then((response) => {
         setBooks(response.data);
         setLoading(false);
       })
       .catch((error) => {
-        console.log(error); 
+        console.log(error);
         setLoading(false);
       });
   }, [id]);
@@ -37,7 +37,6 @@ const ShowBook = () => {
             <span>{book.id}</span>
           </div>
           <div className="my-4">
-
             <span className="text-xl mr-4 text-gray-500">Title</span>
             <span>{book.title}</span>
           </div>
