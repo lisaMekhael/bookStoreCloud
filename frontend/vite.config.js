@@ -3,10 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 // vite.config.js
-export default {
-  build: {
-    rollupOptions: {
-      input: 'src/main.jsx'
-    }
-  }
+export default defineConfig({
+  plugins: [react()],
+})
 }
