@@ -16,7 +16,7 @@ app.use(express.json());
 // Middleware for handling CORS POLICY
 app.use(
   cors({
-    origin: "http://35.153.99.174", // Update with your actual frontend URL
+    origin: "http://52.91.176.156", // Update with your actual frontend URL
   })
 );
 
