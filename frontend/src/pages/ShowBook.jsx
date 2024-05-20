@@ -13,7 +13,7 @@ const ShowBook = () => {
   useEffect(() => {
     console.log("FRONT ENDDDD");
     axios
-      .get(`http://35.153.99.174:5173/books/${id}`)
+      .get(`http://52.91.176.156:5555/books/${id}`)
       .then((response) => {
         setBooks(response.data);
         setLoading(false);
